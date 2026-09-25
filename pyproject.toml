@@ -1,0 +1,9 @@
+[project]
+name = "studybot"
+version = "0.1.0"
+description = "StudyBot — a Discord AI study assistant built for a university AI-engineering workshop."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
