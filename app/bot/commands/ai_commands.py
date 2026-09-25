@@ -40,7 +40,7 @@ class AICommands(commands.Cog):
                 reply = f"{answer}"
 
         except ConfigError as exc:
-            await interaction.followup.send(f"⚠️ {exc}")
+            await interaction.followup.send(f"{exc}")
             return
         except Exception:
             logger.exception("Error handling /ask")

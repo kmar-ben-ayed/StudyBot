@@ -31,7 +31,7 @@ class RAGCommands(commands.Cog):
         state = self.bot.state
 
         if not file.filename.lower().endswith(".pdf"):
-            await interaction.response.send_message("⚠️ Please upload a `.pdf` file.")
+            await interaction.response.send_message("Please upload a `.pdf` file.")
             return
 
         # Note: indexing needs no HF key at all — embeddings run locally via
@@ -47,7 +47,7 @@ class RAGCommands(commands.Cog):
                 stats = state.rag_service.ingest(local_path)
             except Exception as exc:  # noqa: BLE001
                 logger.exception("Error ingesting document")
-                await interaction.followup.send(f"⚠️ Could not index that document: {exc}")
+                await interaction.followup.send(f"Could not index that document: {exc}")
                 return
 
         await interaction.followup.send(
@@ -82,7 +82,7 @@ class RAGCommands(commands.Cog):
         try:
             text = state.ai_service.summarize(chunks)
         except ConfigError as exc:
-            await interaction.followup.send(f"⚠️ {exc}")
+            await interaction.followup.send(f"{exc}")
             return
         reply = f"**Study summary**\n\n{text}"
         await self._send_long(interaction, reply)
@@ -97,7 +97,7 @@ class RAGCommands(commands.Cog):
         try:
             text = state.ai_service.generate_quiz(chunks, num_questions=5)
         except ConfigError as exc:
-            await interaction.followup.send(f"⚠️ {exc}")
+            await interaction.followup.send(f"{exc}")
             return
         reply = f"**Quiz time!**\n\n{text}"
         await self._send_long(interaction, reply)
@@ -112,7 +112,7 @@ class RAGCommands(commands.Cog):
         try:
             text = state.ai_service.generate_flashcards(chunks, num_cards=6)
         except ConfigError as exc:
-            await interaction.followup.send(f"⚠️ {exc}")
+            await interaction.followup.send(f"{exc}")
             return
         reply = f" **Flashcards**\n\n{text}"
         await self._send_long(interaction, reply)
