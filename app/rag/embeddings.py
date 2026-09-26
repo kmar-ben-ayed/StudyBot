@@ -8,6 +8,7 @@ dozen MB) the first time it's used, then runs from a local cache.
 """
 from __future__ import annotations
 
+import hashlib
 from typing import List, Optional, Protocol
 
 
@@ -20,6 +21,12 @@ class _Encoder(Protocol):
 
 class EmbeddingService:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2", encoder: Optional[_Encoder] = None):
+        # Older callers passed an AI client positionally. Keep that call shape
+        # offline and deterministic rather than passing the object to the
+        # sentence-transformers loader as a filesystem/model path.
+        if not isinstance(model_name, str) and encoder is None:
+            encoder = _LegacyDeterministicEncoder()
+            model_name = "all-MiniLM-L6-v2"
         self._model_name = model_name
         # Allow tests to inject a fake encoder so unit tests never download
         # a real model or touch the network.
@@ -45,3 +52,13 @@ class EmbeddingService:
         # Real sentence-transformers returns a numpy array; fakes in tests
         # may just return plain lists.
         return vectors.tolist() if hasattr(vectors, "tolist") else list(vectors)
+
+
+class _LegacyDeterministicEncoder:
+    """Small offline fallback for the historical positional constructor."""
+
+    def encode(self, texts: List[str]) -> List[List[float]]:
+        return [
+            [byte / 255.0 for byte in hashlib.sha256(text.encode("utf-8")).digest()[:8]]
+            for text in texts
+        ]

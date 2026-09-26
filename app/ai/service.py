@@ -26,14 +26,14 @@ class AIService:
     def answer_general(self, question: str) -> str:
         if not self._client.is_configured:
             raise ConfigError(
-                "AI is not configured yet. Ask the bot owner to set AI_API_KEY."
+                "AI is not configured yet. Ask the bot owner to set HF_API_KEY."
             )
         return self._client.chat(prompts.build_general_prompt(question))
 
     def answer_with_context(self, question: str, context_chunks: List[str]) -> str:
         if not self._client.is_configured:
             raise ConfigError(
-                "AI is not configured yet. Ask the bot owner to set AI_API_KEY."
+                "AI is not configured yet. Ask the bot owner to set HF_API_KEY."
             )
         return self._client.chat(prompts.build_rag_prompt(question, context_chunks))
 
